@@ -61,9 +61,11 @@ function moveObstacle (pos) {
             gameOver = true;
     if (username != null){
         loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score);
-        loadxmldoc_DELETECURRENTUSER(username);
+        //loadxmldoc_DELETECURRENTUSER(username);
     }
-            document.location.reload();
+            //document.location.reload();
+            window.location.replace("game-over.html?username=" + username + "&score="+score);
+
             return;
     }
     // If the obstacle has moven of screen delete it from the list.    
@@ -172,6 +174,7 @@ function createObstacles (){
 createObstacles ();
 // Creates more obstacles every 5 seconds.
 setInterval (createObstacles, 5000)
+
 // Adds Key up and down intervals.
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
