@@ -1,0 +1,44 @@
+body {
+    background-color: lightblue;
+
+}
+.position{
+    color: chocolate ;
+}
+.title{
+    color : purple;
+    text-align:center;
+    display:block;
+}
+.table_header{
+    color: indigo;
+}
+
+.score {
+    color: red;
+    text-align:center;
+    display:block;
+    
+}
+.table {
+    margin: 0 auto;
+}
+
+
+#inner {
+    margin: 0 auto;
+    display: inline-block;
+    vertical-align:middle;
+    padding-left:0px;
+    padding-right:0px;
+
+}
+
+#outer {
+    text-align: center;
+    width: 100%;
+}
+
+canvas { 
+    background: #eee;
+}
