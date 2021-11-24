@@ -55,7 +55,8 @@
 <body>
 	<h1 class="title"> Block Doger</h1>
 	<div id="outer">
-		<div id="inner">
+		<!-- Commenting out current Users for now -->
+		<!-- <div id="inner">
 			<h3 class=table_header>Current Users Score</h3>
 			<table id="CurrentUsers" class="table">
 				<tr>
@@ -110,7 +111,7 @@
 			</table>
 			<h5>Your position according to the current-user leader boards</h6>
 			<h3 class=position id="current">Last</h3>
-		</div>
+		</div> -->
 		 <div id="inner">
 			<canvas class="table" id ="myCanvas" width="300" height="500"></canvas>
 		</div>
@@ -424,27 +425,27 @@
    }
 
 	
-   function populateCurrentScoreData(objs){
-	var highScoreTable = document.getElementById("CurrentUsers");
-	highScoreTable.innerHTML = "";
+//    function populateCurrentScoreData(objs){
+// 	var highScoreTable = document.getElementById("CurrentUsers");
+// 	highScoreTable.innerHTML = "";
 
 
 
-	for (var i = 9; i >= 0; i--){
+// 	for (var i = 9; i >= 0; i--){
 		
-		var row1 = highScoreTable.insertRow(0);
-		var cell1 = row1.insertCell(0);
-		var cell2 = row1.insertCell(1);
+// 		var row1 = highScoreTable.insertRow(0);
+// 		var cell1 = row1.insertCell(0);
+// 		var cell2 = row1.insertCell(1);
 
 		
-		// Add some text to the new cells:
-		if (objs[i] != null){
-			cell1.innerHTML = objs[i].username;
-			cell2.innerHTML = objs[i].score;
-		}
-	}
+// 		// Add some text to the new cells:
+// 		if (objs[i] != null){
+// 			cell1.innerHTML = objs[i].username;
+// 			cell2.innerHTML = objs[i].score;
+// 		}
+// 	}
 
-   }
+//    }
 
 
    function parseData(data){
@@ -459,18 +460,18 @@
    }
 	
 	
-   function loadXMLDoc_GETCURRENTSCORE(){
-        var xmlHttp = new XMLHttpRequest ();
-	xmlHttp.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200){
-			var responseText =  xmlHttp.responseText;
-			refreshCurrentScoreData(responseText);
-		}
-	};
-        xmlHttp.open ( "GET", "http://" + FLASK_API + "/CurrentUsers/Get", true);
-        xmlHttp.setRequestHeader('Content-Type', 'application/json');
-        xmlHttp.send();
-   }
+//    function loadXMLDoc_GETCURRENTSCORE(){
+//         var xmlHttp = new XMLHttpRequest ();
+// 	xmlHttp.onreadystatechange = function () {
+// 		if (this.readyState == 4 && this.status == 200){
+// 			var responseText =  xmlHttp.responseText;
+// 			refreshCurrentScoreData(responseText);
+// 		}
+// 	};
+//         xmlHttp.open ( "GET", "http://" + FLASK_API + "/CurrentUsers/Get", true);
+//         xmlHttp.setRequestHeader('Content-Type', 'application/json');
+//         xmlHttp.send();
+//    }
 
 
 
@@ -500,19 +501,19 @@
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send(data);
  }	
-  function loadXMLDoc_GETCURRENTSCOREPOSITION (currentScore){
-	var xmlHttp = new XMLHttpRequest ();
+//   function loadXMLDoc_GETCURRENTSCOREPOSITION (currentScore){
+// 	var xmlHttp = new XMLHttpRequest ();
 
-	var data = JSON.stringify({"score": currentScore});
-	xmlHttp.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200){
-				document.getElementById("current").innerHTML =  xmlHttp.responseText +'st'
-		}
-	}
-	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/GetPosition", true);
-	xmlHttp.setRequestHeader('Content-Type', 'application/json');
-	xmlHttp.send(data);
- }	
+// 	var data = JSON.stringify({"score": currentScore});
+// 	xmlHttp.onreadystatechange = function () {
+// 		if (this.readyState == 4 && this.status == 200){
+// 				document.getElementById("current").innerHTML =  xmlHttp.responseText +'st'
+// 		}
+// 	}
+// 	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/GetPosition", true);
+// 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
+// 	xmlHttp.send(data);
+//  }	
 	
 
 
@@ -528,26 +529,26 @@
 
 
 
-  function loadxmldoc_PUSHTOCURRENTUSERS(username, score){
+//   function loadxmldoc_PUSHTOCURRENTUSERS(username, score){
 
-        var data = JSON.stringify({"username": username, "score": score});
-        var xmlHttp = new XMLHttpRequest ();
-	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Add", true);
-        xmlHttp.setRequestHeader('content-type', 'application/json');
-        xmlHttp.send(data);
-        return xmlHttp.responsetext;
-   }
+//         var data = JSON.stringify({"username": username, "score": score});
+//         var xmlHttp = new XMLHttpRequest ();
+// 	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Add", true);
+//         xmlHttp.setRequestHeader('content-type', 'application/json');
+//         xmlHttp.send(data);
+//         return xmlHttp.responsetext;
+//    }
 
 
-  function loadxmldoc_DELETECURRENTUSER(username){
+//   function loadxmldoc_DELETECURRENTUSER(username){
 
-        var data = JSON.stringify({"username": username});
-        var xmlHttp = new XMLHttpRequest ();
-	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Delete", true);
-        xmlHttp.setRequestHeader('content-type', 'application/json');
-        xmlHttp.send(data);
-        return xmlHttp.responsetext;
-   }
+//         var data = JSON.stringify({"username": username});
+//         var xmlHttp = new XMLHttpRequest ();
+// 	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Delete", true);
+//         xmlHttp.setRequestHeader('content-type', 'application/json');
+//         xmlHttp.send(data);
+//         return xmlHttp.responsetext;
+//    }
 
 
 
@@ -555,18 +556,18 @@
 
 
   setInterval (function () {loadXMLDoc_GETHIGHSCOREPOSITION (score);}, 1000);
-  setInterval (function () {loadXMLDoc_GETCURRENTSCOREPOSITION (score);}, 1000);
+  //setInterval (function () {loadXMLDoc_GETCURRENTSCOREPOSITION (score);}, 1000);
 
   // Gets the initial Data for the HighScore Table.
   loadXMLDoc_GETHIGHSCORE();
   
 
   // Updates the HighScore and Current Users tables;
-  setInterval (loadXMLDoc_GETCURRENTSCORE, 1000);
+  //setInterval (loadXMLDoc_GETCURRENTSCORE, 1000);
   setInterval(loadXMLDoc_GETHIGHSCORE, 5000);
   
   // Pushes the users current score every second.
-  setInterval (function () {loadxmldoc_PUSHTOCURRENTUSERS(username, score);}, 1000);
+  //setInterval (function () {loadxmldoc_PUSHTOCURRENTUSERS(username, score);}, 1000);
 
 </script>
 
