@@ -176,7 +176,7 @@
 	<h1 class=score  id ="scoreWindow">
 	<h1 class=score  id ="Username"> 
 <script>
-   
+    const FLASK_API = "http://localhost:5000"
 
     var username = askforUsername();
 
@@ -467,7 +467,7 @@
 			refreshCurrentScoreData(responseText);
 		}
 	};
-        xmlHttp.open ( "GET", "http://localhost:5000/CurrentUsers/Get", true);
+        xmlHttp.open ( "GET", "http://" + FLASK_API + "/CurrentUsers/Get", true);
         xmlHttp.setRequestHeader('Content-Type', 'application/json');
         xmlHttp.send();
    }
@@ -482,7 +482,7 @@
 			refreshHighScoreData(responseText);
 		}
 	};
-        xmlHttp.open ( "GET", "http://localhost:5000/HighScores/Get", true);
+        xmlHttp.open ( "GET", "http://" + FLASK_API + "/HighScores/Get", true);
         xmlHttp.setRequestHeader('Content-Type', 'application/json');
         xmlHttp.send();
    }
@@ -496,7 +496,7 @@
 			document.getElementById("highScorePosition").innerHTML =  xmlHttp.responseText + 'st'
 		}
 	}
-	xmlHttp.open ( "POST", "http://localhost:5000/HighScores/GetPosition", true);
+	xmlHttp.open ( "POST", "http://" + FLASK_API + "/HighScores/GetPosition", true);
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send(data);
  }	
@@ -509,7 +509,7 @@
 				document.getElementById("current").innerHTML =  xmlHttp.responseText +'st'
 		}
 	}
-	xmlHttp.open ( "POST", "http://localhost:5000/CurrentUsers/GetPosition", true);
+	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/GetPosition", true);
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send(data);
  }	
@@ -520,7 +520,7 @@
 	var data = JSON.stringify({"username": username, "score": score});
         var xmlhttp = new XMLHttpRequest ();
         
-	xmlhttp.open ( "POST", "http://localhost:5000/HighScores/Add", false);
+	xmlhttp.open ( "POST", "http://" + FLASK_API + "/HighScores/Add", false);
         xmlhttp.setRequestHeader('content-type', 'application/json');
         xmlhttp.send(data);
         return xmlhttp.responsetext;
@@ -532,7 +532,7 @@
 
         var data = JSON.stringify({"username": username, "score": score});
         var xmlHttp = new XMLHttpRequest ();
-	xmlHttp.open ( "POST", "http://localhost:5000/CurrentUsers/Add", true);
+	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Add", true);
         xmlHttp.setRequestHeader('content-type', 'application/json');
         xmlHttp.send(data);
         return xmlHttp.responsetext;
@@ -543,7 +543,7 @@
 
         var data = JSON.stringify({"username": username});
         var xmlHttp = new XMLHttpRequest ();
-	xmlHttp.open ( "POST", "http://localhost:5000/CurrentUsers/Delete", true);
+	xmlHttp.open ( "POST", "http://" + FLASK_API + "/CurrentUsers/Delete", true);
         xmlHttp.setRequestHeader('content-type', 'application/json');
         xmlHttp.send(data);
         return xmlHttp.responsetext;
