@@ -20,46 +20,6 @@ CORS(app)
 def test():
 	return 'hello there'
 
-@app.route('/CurrentUsers/Get', methods = ['GET'])
-def getCurrentUsers ():
-	json = '{"data": ['
-	rows = session.execute('select * from currentUsers;')
-	for row in rows:
-		json += '{ "username" : "' + row.currentusers_username + '" , "score" : ' + str(row.currentusers_score) + '},'
-	json = json[:-1] 
-	json += ']}'
-
-	return json
-
-@app.route('/CurrentUsers/Add', methods = ['POST'])
-def addCurrentUser ():
-	username = request.json['username']
-	score = request.json['score']
-	session.execute('INSERT INTO currentUsers (currentusers_username, currentusers_score) VALUES (%s, %s) USING TTL 10', (username, score))
-	return str(request.json)
-
-@app.route('/CurrentUsers/Delete', methods = ['POST'])
-def deleteCurrentUser ():
-	username = request.json['username']
-	session.execute('DELETE FROM currentUsers WHERE currentusers_username=%s', (username,))
-	return str(request.json)
-
-@app.route('/CurrentUsers/Update', methods = ['POST'])
-def updateCurrentUser ():
-	username = request.json['username']
-	score = request.json['score']
-	session.execute('UPDATE currentUsers SET currentusers_score=%s WHERE currentusers_username=%s', (score, username))
-	return str(request.json)
-
-@app.route('/CurrentUsers/GetPosition', methods =['POST'])
-def getCurrentPosition ():
-	count = 0
-	score = request.json['score']
-	rows = session.execute('SELECT * FROM currentUsers WHERE currentusers_score >= %s ALLOW FILTERING', (score,))
-	for row in rows:
-		count += 1
-	return str(count + 1)
-
 @app.route('/HighScores/Get', methods = ['GET'])
 def getHighScoreUsers ():
 	json = '{"data": ['
