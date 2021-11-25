@@ -1,3 +1,21 @@
+var time = getRandomInt(1,100)
+console.log(time)
+setInterval (function() { 
+    if (username != null){
+            loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score);
+            //loadxmldoc_DELETECURRENTUSER(username);
+        }
+                //document.location.reload();
+                window.location.replace("game-over.html?username=" + username + "&score="+score);
+
+                return;
+}, 10000  * time)
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  }
 // The canvas
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
@@ -56,7 +74,7 @@ function moveObstacle (pos) {
     ctx.closePath(); 
     // Updates the obstacles position.
     obstacleList[pos] = [x,y];
-    // Checks if the user has hit the obstacle. -- Removing for benchmark testing
+    // // Checks if the user has hit the obstacle. -- Removing for benchmark testing
     // if (y >= rectangleY && ((x >= rectangleX && x + obstacleLength <= rectangleX + 30))){
     //         gameOver = true;
     // if (username != null){
