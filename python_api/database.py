@@ -8,7 +8,7 @@ from flask_cors import CORS
 from cassandra.cluster import Cluster
 
 
-cluster = Cluster()
+cluster = Cluster(["0.0.0.0"])
 session = cluster.connect('highscoredata')
 
 
