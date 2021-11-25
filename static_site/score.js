@@ -1,4 +1,4 @@
-const FLASK_API = "localhost:5000"
+const FLASK_API = "40.69.129.100:5000"
 
 function loadXMLDoc_GETHIGHSCORE(){
     var xmlHttp = new XMLHttpRequest ();

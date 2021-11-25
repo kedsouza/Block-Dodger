@@ -56,18 +56,18 @@ function moveObstacle (pos) {
     ctx.closePath(); 
     // Updates the obstacles position.
     obstacleList[pos] = [x,y];
-    // Checks if the user has hit the obstacle.
-    if (y >= rectangleY && ((x >= rectangleX && x + obstacleLength <= rectangleX + 30))){
-            gameOver = true;
-    if (username != null){
-        loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score);
-        //loadxmldoc_DELETECURRENTUSER(username);
-    }
-            //document.location.reload();
-            window.location.replace("game-over.html?username=" + username + "&score="+score);
+    // Checks if the user has hit the obstacle. -- Removing for benchmark testing
+    // if (y >= rectangleY && ((x >= rectangleX && x + obstacleLength <= rectangleX + 30))){
+    //         gameOver = true;
+    // if (username != null){
+    //     loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score);
+    //     //loadxmldoc_DELETECURRENTUSER(username);
+    // }
+    //         //document.location.reload();
+    //         window.location.replace("game-over.html?username=" + username + "&score="+score);
 
-            return;
-    }
+    //         return;
+    // }
     // If the obstacle has moven of screen delete it from the list.    
     if (y > canvas.height + obstacleHeight){
        obstacleList.splice(pos, 1);
