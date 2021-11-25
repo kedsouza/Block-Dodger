@@ -73,4 +73,4 @@ def exceptionHandler (error):
 	return "Do not exists"
 
 if __name__ == '__main__':
-   app.run()
+   app.run("0.0.0.0")
