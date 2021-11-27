@@ -7,8 +7,6 @@ import logging
 from flask import Flask, Response, request
 from flask_cors import CORS
 
-import opencensus
-
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
