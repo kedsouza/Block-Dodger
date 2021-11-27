@@ -4,33 +4,31 @@ Rest API that provides calls to the database.
 
 import json 
 import logging
+import datetime
 from flask import Flask, Response, request
 from flask_cors import CORS
+from flask.logging import default_handler
+
 
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 
 # Cassandra Database
+
+# Remove SSL operation for now
 ssl_opts = {
-        #'ca_certs': '.\database.cert',
-        'ssl_version': PROTOCOL_TLSv1_2,
-        'cert_reqs': CERT_NONE  # Certificates are required and validated
+        'cert_reqs': CERT_NONE
 }
-
-
-
 auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password="StMBPhgiA3qrzwTaVqGy4a1JzW3YNUXEkwyPt3Rns5HyK2gIXKxyD0SvctrR5XWJuCcc6dB8AdVB6X3vUquZKw==")
 cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
 session = cluster.connect('highscoredata')
 
-# Pthyon Logging
-logging.basicConfig(filename='error.log', level=logging.ERROR)
-
-
 app = Flask(__name__)
 
-CORS(app)
+# Disable standard flask logging
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 @app.route("/test")
 def test():
@@ -84,9 +82,17 @@ def getHighScorePosition ():
 		count += 1
 	return str(count + 1)
 
-@app.errorhandler(Exception)
-def log_errror (error):
-	logging.error(error)
+# @app.errorhandler(Exception)
+# def log_errror (error):
+# 	return
+# 	# timestamp = datetime.datetime.utcnow()
+# 	# logging.error([timestamp, error])
+
+# @app.errorhandler()
+# def log_errror (error):
+# 	return
+# 	# timestamp = datetime.datetime.utcnow()
+# 	# logging.error([timestamp, error])
 
 if __name__ == '__main__':
    app.run("0.0.0.0")
