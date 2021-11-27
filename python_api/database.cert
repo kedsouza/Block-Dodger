@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-trans
+itional.dtd">
+<!-- saved from url=(0074)https://baltimore-cybertrust-root.chain-demos.digicert.com/info/index.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" href="./balt.cert_files/style.css" type="text/css">
+</head>
+<body>
+
+<div id="mainContainer">
+<table width="100%"><tbody><tr><td align="left"><img src="./balt.cert_files/digicert-logo.gif" height="58" width="224"></td><td align="right"><h1>Baltimore CyberTrust Root</h1></td></tr></tbody></table>
+
+<p>This page contains information about the 'Baltimore CyberTrust Root' certificate.</p>
+
+<p>Visit the <a href="https://www.digicert.com/kb/digicert-root-certificates.htm">DigiCert Root Certificate Information</a> page to see our other root certificates.</p>
+
+<h2>Root Certificate Details:</h2>
+
+<pre style="margin-left: 5px"><strong>Serial Number:</strong>
+  02:00:00:B9
+  
+<strong>Subject:</strong>
+   /C=IE/O=Baltimore/OU=CyberTrust/CN=Baltimore CyberTrust Root
+
+<strong>Validity period:</strong>
+  Not Before: 12-May-2000
+  Not After:  12-May-2025
+
+<strong>Fingerprints:</strong><span style="font-size:88%">
+   MD5: AC:B6:94:A5:9C:17:E0:D7:91:52:9B:B1:97:06:A6:E4
+   SHA1: D4:DE:20:D0:5E:66:FC:53:FE:1A:50:88:2C:78:DB:28:52:CA:E4:74
+   SHA256: 16:AF:57:A9:F6:76:B0:AB:12:60:95:AA:5E:BA:DE:F2:2A:B3:11:19:D6:44:AC:95:CD:4B:93:DB:F3:F2:6A:EB<span>
+	
+<strong>Key:</strong>
+  Size: 2048 bit RSA
+  Key Usage: Certificate Sign, CRL Sign
+  Basic Constraints: CA:TRUE, pathlen:3
+
+<strong>Subject Key Identifier:</strong>
+  E5:9D:59:30:82:47:58:CC:AC:FA:08:54:36:86:7B:3A:B5:04:4D:F0
+
+<strong>Signature Algorithm:</strong>
+  sha1WithRSAEncryption
+
+<strong>Certificate:</strong>
+-----BEGIN CERTIFICATE-----
+MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ
+RTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJlclRydXN0MSIwIAYD
+VQQDExlCYWx0aW1vcmUgQ3liZXJUcnVzdCBSb290MB4XDTAwMDUxMjE4NDYwMFoX
+DTI1MDUxMjIzNTkwMFowWjELMAkGA1UEBhMCSUUxEjAQBgNVBAoTCUJhbHRpbW9y
+ZTETMBEGA1UECxMKQ3liZXJUcnVzdDEiMCAGA1UEAxMZQmFsdGltb3JlIEN5YmVy
+VHJ1c3QgUm9vdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKMEuyKr
+mD1X6CZymrV51Cni4eiVgLGw41uOKymaZN+hXe2wCQVt2yguzmKiYv60iNoS6zjr
+IZ3AQSsBUnuId9Mcj8e6uYi1agnnc+gRQKfRzMpijS3ljwumUNKoUMMo6vWrJYeK
+mpYcqWe4PwzV9/lSEy/CG9VwcPCPwBLKBsua4dnKM3p31vjsufFoREJIE9LAwqSu
+XmD+tqYF/LTdB1kC1FkYmGP1pWPgkAx9XbIGevOF6uvUA65ehD5f/xXtabz5OTZy
+dc93Uk3zyZAsuT3lySNTPx8kmCFcB5kpvcY67Oduhjprl3RjM71oGDHweI12v/ye
+jl0qhqdNkNwnGjkCAwEAAaNFMEMwHQYDVR0OBBYEFOWdWTCCR1jMrPoIVDaGezq1
+BE3wMBIGA1UdEwEB/wQIMAYBAf8CAQMwDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3
+DQEBBQUAA4IBAQCFDF2O5G9RaEIFoN27TyclhAO992T9Ldcw46QQF+vaKSm2eT92
+9hkTI7gQCvlYpNRhcL0EYWoSihfVCr3FvDB81ukMJY2GQE/szKN+OMY3EU/t3Wgx
+jkzSswF07r51XgdIGn9w/xZchMB5hbgF/X++ZRGjD8ACtPhSNzkE1akxehi/oCr0
+Epn3o0WC4zxe9Z2etciefC7IpJ5OCBRLbf1wbWsaY71k5h+3zvDyny67G7fyUIhz
+ksLi4xaNmjICq44Y3ekQEe5+NauQrz4wlHrQMz2nZQ/1/I6eYs9HRCwBXbsdtTLS
+R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp
+-----END CERTIFICATE-----
+
+</span></span></pre>
+
+</div>
+
+<script>
+document.write('<p style=\"text-align: center; font-size: 80%\"><strong>Your browser: ' + navigator.userAgent + '</strong></p>');
+</script><p style="text-align: center; font-size: 80%"><strong>Your browser: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36 Edg/96.0.1054.29</strong></p>
+
+
+
+</body></html>

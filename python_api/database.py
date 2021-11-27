@@ -6,9 +6,19 @@ import json
 from flask import Flask, Response, request
 from flask_cors import CORS
 from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
+from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
+
+ssl_opts = {
+        #'ca_certs': '.\database.cert',
+        'ssl_version': PROTOCOL_TLSv1_2,
+        'cert_reqs': CERT_NONE  # Certificates are required and validated
+}
 
 
-cluster = Cluster(["0.0.0.0"])
+
+auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password="StMBPhgiA3qrzwTaVqGy4a1JzW3YNUXEkwyPt3Rns5HyK2gIXKxyD0SvctrR5XWJuCcc6dB8AdVB6X3vUquZKw==")
+cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
 session = cluster.connect('highscoredata')
 
 
