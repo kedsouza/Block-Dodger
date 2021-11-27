@@ -3,12 +3,17 @@ Rest API that provides calls to the database.
 """
 
 import json 
+import logging
 from flask import Flask, Response, request
 from flask_cors import CORS
+
+import opencensus
+
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 
+# Cassandra Database
 ssl_opts = {
         #'ca_certs': '.\database.cert',
         'ssl_version': PROTOCOL_TLSv1_2,
@@ -21,9 +26,12 @@ auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password=
 cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
 session = cluster.connect('highscoredata')
 
+# Pthyon Logging
+logging.basicConfig(filename='error.log', level=logging.ERROR)
 
 
 app = Flask(__name__)
+
 CORS(app)
 
 @app.route("/test")
@@ -78,9 +86,9 @@ def getHighScorePosition ():
 		count += 1
 	return str(count + 1)
 
-@app.errorhandler(ValueError)
-def exceptionHandler (error):
-	return "Do not exists"
+@app.errorhandler(Exception)
+def log_errror (error):
+	logging.error(error)
 
 if __name__ == '__main__':
    app.run("0.0.0.0")
