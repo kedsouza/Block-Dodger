@@ -5,14 +5,18 @@ Rest API that provides calls to the database.
 import json 
 import logging
 import datetime
+import time
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.logging import default_handler
-
+from flask_socketio import SocketIO
 
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
+
+import threading
+
 
 # Cassandra Database
 
@@ -25,10 +29,23 @@ cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=1035
 session = cluster.connect('highscoredata')
 
 app = Flask(__name__)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 # Disable standard flask logging
-log = logging.getLogger('werkzeug')
-log.disabled = True
+# log = logging.getLogger('werkzeug')
+# log.disabled = True
+
+@socketio.on('message')
+def handle_message(data):
+	print('recieved message ' + data)
+
+def test_broadcast():
+	while True:
+		print("Calling test broadcast")
+		time.sleep(1)
+		data = getHighScoreUsers()
+		socketio.emit('score', data)
 
 @app.route("/test")
 def test():
@@ -82,17 +99,9 @@ def getHighScorePosition ():
 		count += 1
 	return str(count + 1)
 
-# @app.errorhandler(Exception)
-# def log_errror (error):
-# 	return
-# 	# timestamp = datetime.datetime.utcnow()
-# 	# logging.error([timestamp, error])
-
-# @app.errorhandler()
-# def log_errror (error):
-# 	return
-# 	# timestamp = datetime.datetime.utcnow()
-# 	# logging.error([timestamp, error])
-
 if __name__ == '__main__':
-   app.run("0.0.0.0")
+	t1= threading.Thread(target=test_broadcast)
+	t1.start()
+	socketio.run(app)
+
+

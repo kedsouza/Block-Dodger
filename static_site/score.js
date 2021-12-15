@@ -1,4 +1,20 @@
-const FLASK_API = "23.100.82.77:5000"
+var socket = io("http://localhost:5000", { cors: {
+    origin: "*",
+}
+  });
+socket.on('connect', function() {
+    socket.send("Hello-client is connected!");
+});
+
+socket.on('score', (data) => {
+    refreshHighScoreData(data)
+})
+
+
+
+
+
+const FLASK_API = "localhost:5000"
 
 function loadXMLDoc_GETHIGHSCORE(){
     var xmlHttp = new XMLHttpRequest ();

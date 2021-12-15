@@ -77,6 +77,8 @@
 	</div>
 	<h1 class=score  id ="scoreWindow">
 	<h1 class=score  id ="Username">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="utils.js"></script>
 <script src="score.js"></script>
 <script>
@@ -94,8 +96,8 @@
 
 
     function refreshHighScoreData(data){
-	var objs = parseData(data);
-    	populateHighScoreData(objs);
+		var objs = parseData(data);
+			populateHighScoreData(objs);
     }
 
    function populateHighScoreData(objs){
@@ -131,11 +133,11 @@
 	return jsonArray;
    }
 
-  // Gets the initial Data for the HighScore Table.
-  loadXMLDoc_GETHIGHSCORE();
+//   // Gets the initial Data for the HighScore Table.
+//   loadXMLDoc_GETHIGHSCORE();
   
-  // Updates the HighScore and Current Users tables;
-  setInterval(loadXMLDoc_GETHIGHSCORE, 5000);
+//   // Updates the HighScore and Current Users tables;
+//   setInterval(loadXMLDoc_GETHIGHSCORE, 5000);
 
 </script>
 
