@@ -6,6 +6,7 @@ import json
 import logging
 import datetime
 import time
+import sys
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.logging import default_handler
@@ -40,9 +41,8 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 def handle_message(data):
 	print('recieved message ' + data)
 
-def test_broadcast():
+def highscore_broadcast():
 	while True:
-		print("Calling test broadcast")
 		time.sleep(1)
 		data = getHighScoreUsers()
 		socketio.emit('score', data)
@@ -51,16 +51,15 @@ def test_broadcast():
 def test():
 	return 'hello there'
 
-@app.route('/HighScores/Get', methods = ['GET'])
 def getHighScoreUsers ():
 	json = '{"data": ['
-	rows = session.execute('select * from highScores;')
+	rows = session.execute('SELECT * FROM highscoredata.highscores')
 	for row in rows:
 		json += '{ "username" : "' + row.highscores_username + '" , "score" : ' + str(row.highscores_score) + '},'
 	json = json[:-1] 
 	json += ']}'
-
 	return json
+
 @app.route('/HighScores/Add', methods = ['POST'])
 def addHighScoreUser ():
 	username = request.json['username']
@@ -79,7 +78,6 @@ def addHighScoreUser ():
 
 def insertIntoHighScore(username,score):
 	session.execute('INSERT INTO highScores (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
-
 
 @app.route('/HighScores/Find', methods = ['POST'])
 def findHighScoreUser ():
@@ -100,8 +98,13 @@ def getHighScorePosition ():
 	return str(count + 1)
 
 if __name__ == '__main__':
-	t1= threading.Thread(target=test_broadcast)
-	t1.start()
-	socketio.run(app)
+	try:
+		t1 = threading.Thread(target=highscore_broadcast)
+		t1.daemon = True
+		t1.start()
+		socketio.run(app)
+	except KeyboardInterrupt:
+		print ('Stopping')
+		sys.exit(0)
 
 
