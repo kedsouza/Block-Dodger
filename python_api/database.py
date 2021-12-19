@@ -18,16 +18,17 @@ from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 
 import threading
 
-
-# Cassandra Database
-
-# Remove SSL operation for now
-ssl_opts = {
-        'cert_reqs': CERT_NONE
-}
-auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password="StMBPhgiA3qrzwTaVqGy4a1JzW3YNUXEkwyPt3Rns5HyK2gIXKxyD0SvctrR5XWJuCcc6dB8AdVB6X3vUquZKw==")
-cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
-session = cluster.connect('highscoredata')
+# SQL
+import pyodbc 
+# Some other example server values are
+# server = 'localhost\sqlexpress' # for a named instance
+# server = 'myserver,port' # to specify an alternate port
+server = 'tcp:block-dodger.database.windows.net' 
+database = 'block-dodger-sql' 
+username = 'keegan' 
+password = 'Database15!' 
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = cnxn.cursor()
 
 app = Flask(__name__)
 CORS(app)
@@ -53,11 +54,17 @@ def test():
 
 def getHighScoreUsers ():
 	json = '{"data": ['
-	rows = session.execute('SELECT * FROM highscoredata.highscores')
-	for row in rows:
-		json += '{ "username" : "' + row.highscores_username + '" , "score" : ' + str(row.highscores_score) + '},'
+
+	cursor = cnxn.cursor()
+	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
+
+	for i in cursor:
+		json += '{ "username" : "' + i[0] + '" , "score" : ' + str(i[1]) + '},'
+	
 	json = json[:-1] 
 	json += ']}'
+
+
 	return json
 
 @app.route('/HighScores/Add', methods = ['POST'])
@@ -77,7 +84,7 @@ def addHighScoreUser ():
 	return 'hello'
 
 def insertIntoHighScore(username,score):
-	session.execute('INSERT INTO highScores (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
+	session.execute('INSERT INTO highscoresorder (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
 
 @app.route('/HighScores/Find', methods = ['POST'])
 def findHighScoreUser ():
