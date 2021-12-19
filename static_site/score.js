@@ -7,7 +7,8 @@ socket.on('connect', function() {
 });
 
 socket.on('score', (data) => {
-    refreshHighScoreData(data)
+    objs = JSON.parse(data)
+    populateHighScoreData(objs["data"]);
 })
 
 

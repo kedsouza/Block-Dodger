@@ -3,21 +3,25 @@
 import random
 import uuid
 
-# Cassandra
-from cassandra.cluster import Cluster
-from cassandra.auth import PlainTextAuthProvider
-from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
+# SQL
+import pyodbc 
+# Some other example server values are
+# server = 'localhost\sqlexpress' # for a named instance
+# server = 'myserver,port' # to specify an alternate port
+server = 'tcp:block-dodger.database.windows.net' 
+database = 'block-dodger-sql' 
+username = 'keegan' 
+password = 'Database15!' 
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = cnxn.cursor()
 
-# Remove SSL operation for now
-ssl_opts = {
-        'cert_reqs': CERT_NONE
-}
-auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password="StMBPhgiA3qrzwTaVqGy4a1JzW3YNUXEkwyPt3Rns5HyK2gIXKxyD0SvctrR5XWJuCcc6dB8AdVB6X3vUquZKw==")
-cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
-session = cluster.connect('highscoredata')
+
 
 def insertIntoHighScore(username,score):
-	session.execute('INSERT INTO highscoresorder (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
+    #Sample insert query
+    count = cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?,?)""", username, score)
+    cnxn.commit()
+    print('Rows inserted: ' + str(count))
 
 for  i in range(100):
     user = str(uuid.uuid4())

@@ -94,12 +94,6 @@
     document.getElementById("Username").innerHTML =  get("username");
     document.getElementById("scoreWindow").innerHTML = "Score: " +  get("score");
 
-
-    function refreshHighScoreData(data){
-		var objs = parseData(data);
-			populateHighScoreData(objs);
-    }
-
    function populateHighScoreData(objs){
 	var highScoreTable = document.getElementById("HighScoreUsers");
 	highScoreTable.innerHTML = "";
@@ -122,22 +116,6 @@
 
    }
 
-   function parseData(data){
-	var json = JSON.parse(data);
-	var jsonArray = json["data"];
-	
-
-	jsonArray.sort(function(a, b) {
-    		return parseInt(b.score) - parseInt(a.score);
-	})
-	return jsonArray;
-   }
-
-//   // Gets the initial Data for the HighScore Table.
-//   loadXMLDoc_GETHIGHSCORE();
-  
-//   // Updates the HighScore and Current Users tables;
-//   setInterval(loadXMLDoc_GETHIGHSCORE, 5000);
 
 </script>
 
