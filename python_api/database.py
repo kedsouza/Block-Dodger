@@ -19,10 +19,10 @@ from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 import threading
 
 # SQL
-import pyodbc 
 # Some other example server values are
 # server = 'localhost\sqlexpress' # for a named instance
 # server = 'myserver,port' # to specify an alternate port
+import pyodbc 
 server = 'tcp:block-dodger.database.windows.net' 
 database = 'block-dodger-sql' 
 username = 'keegan' 
@@ -97,12 +97,13 @@ def findHighScoreUser ():
 
 @app.route('/HighScores/GetPosition', methods =['POST'])
 def getHighScorePosition ():
-	count = 0
+	cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+	cursor = cnxn.cursor()	
+
 	score = request.json['score']
-	rows = session.execute('SELECT * FROM highScores WHERE highScores_score >= %s ALLOW FILTERING', (score,))
-	for row in rows:
-		count += 1
-	return str(count + 1)
+	cursor.execute('SELECT COUNT(highScores_score) FROM highScoredata WHERE highScores_score >=' + str(score))
+	result = cursor.fetchall()
+	return str(result[0][0] + 1)
 
 if __name__ == '__main__':
 	try:
