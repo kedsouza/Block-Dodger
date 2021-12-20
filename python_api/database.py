@@ -34,9 +34,24 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-# Disable standard flask logging
-# log = logging.getLogger('werkzeug')
-# log.disabled = True
+
+# Flask endpoints implemented for testing the api. 
+# In prodcution websocket events will be used
+
+# Health endpoint to verify the flask api is running
+@app.route("/health")
+def health():
+	return 'Healthy!'
+
+@app.route("/HighScores/GetTopTen")
+def callgetHighScoreUsers():
+	return getHighScoreUsers()
+
+# JSON { "score" : int }
+@app.route('/HighScores/GetPosition', methods =['POST'])
+def callHighScorePosition():
+	score = request.json['score']
+	return getHighScorePosition(score)
 
 @socketio.on('message')
 def handle_message(data):
@@ -48,24 +63,7 @@ def highscore_broadcast():
 		data = getHighScoreUsers()
 		socketio.emit('score', data)
 
-@app.route("/test")
-def test():
-	return 'hello there'
 
-def getHighScoreUsers ():
-	json = '{"data": ['
-
-	cursor = cnxn.cursor()
-	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
-
-	for i in cursor:
-		json += '{ "username" : "' + i[0] + '" , "score" : ' + str(i[1]) + '},'
-	
-	json = json[:-1] 
-	json += ']}'
-
-
-	return json
 
 @app.route('/HighScores/Add', methods = ['POST'])
 def addHighScoreUser ():
@@ -95,15 +93,34 @@ def findHighScoreUser ():
 		return "Not Found"
 	return "Found"
 
-@app.route('/HighScores/GetPosition', methods =['POST'])
-def getHighScorePosition ():
-	cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-	cursor = cnxn.cursor()	
+# Returns the top ten users and scores.
+def getHighScoreUsers ():
 
-	score = request.json['score']
+	cursor = cnxn.cursor()
+	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
+
+	json = '{"data": ['
+	for i in cursor:
+		json += '{ "username" : "' + i[0] + '" , "score" : ' + str(i[1]) + '},'
+	json = json[:-1] 
+	json += ']}'
+
+	# Returns string in valid json format, will see if we can clean this up"
+	return json
+
+# Queries the SQL Database to get the position based on score. 
+# inputs:
+# 	score: int
+def getHighScorePosition (score):
+	cursor = cnxn.cursor()	
 	cursor.execute('SELECT COUNT(highScores_score) FROM highScoredata WHERE highScores_score >=' + str(score))
 	result = cursor.fetchall()
+	# Increments position to account for top record being 0 
 	return str(result[0][0] + 1)
+
+
+
+
 
 if __name__ == '__main__':
 	try:
