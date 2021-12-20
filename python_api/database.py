@@ -64,12 +64,18 @@ def calladdHighScoreUser():
 def handle_message(data):
 	print('recieved message ' + data)
 
+@socketio.on('requestScorePosition')
+def returnScorePosition(data):
+	username = data["username"]
+	currentScore = data["currentScore"]
+	socketio.emit(username, getHighScorePosition(currentScore))
+
+# Broadcasts high score data, every second to connected websocket clients
 def highscore_broadcast():
 	while True:
 		time.sleep(1)
 		data = getHighScoreUsers()
 		socketio.emit('score', data)
-
 
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
@@ -105,12 +111,12 @@ def addHighScoreUser (username, score):
 	for user in cursor:
 		print (user)
 		if (score > user[1]):	
-			cursor.execute('INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)', (username, score))
+			cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
 			return 'hello'
 		else: 
 			return 'Not Added'
 
-	cursor.execute('INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)', (username, score))
+	cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
 	return 'hello'
 
 
