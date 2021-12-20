@@ -53,8 +53,12 @@ def callHighScorePosition():
 	score = request.json['score']
 	return getHighScorePosition(score)
 
-
-
+# JSON { "user" : string, "score" : int}
+@app.route('/HighScores/Add', methods = ['POST'])
+def calladdHighScoreUser():
+	username = request.json['username']
+	score = request.json['score']
+	return addHighScoreUser(username, score)
 
 @socketio.on('message')
 def handle_message(data):
@@ -67,30 +71,8 @@ def highscore_broadcast():
 		socketio.emit('score', data)
 
 
-
-@app.route('/HighScores/Add', methods = ['POST'])
-def addHighScoreUser ():
-	username = request.json['username']
-	score = request.json['score']
-
-	rows = session.execute('SELECT * FROM highScores WHERE highscores_username=%s', (username,))
-	for users in rows:
-		if (users !=None and users.highscores_score < score):	
-			insertIntoHighScore(username, score)
-			return 'hello'
-		else: 
-			return 'Not Added'
-
-	insertIntoHighScore(username, score)
-	return 'hello'
-
-def insertIntoHighScore(username,score):
-	session.execute('INSERT INTO highscoresorder (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
-
-
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
-
 	cursor = cnxn.cursor()
 	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
 
@@ -100,7 +82,7 @@ def getHighScoreUsers ():
 	json = json[:-1] 
 	json += ']}'
 
-	# Returns string in valid json format, will see if we can clean this up"
+	# Returns string in valid json format, will see if we can clean this up
 	return json
 
 # Queries the SQL Database to get the position based on score. 
@@ -113,7 +95,23 @@ def getHighScorePosition (score):
 	# Increments position to account for top record being 0 
 	return str(result[0][0] + 1)
 
+# Adds inputs into the database, need to revist logic of user names
+# inputs:
+# 	username: text
+# 	score : int 
+def addHighScoreUser (username, score):
+	cursor = cnxn.cursor()
+	cursor.execute('SELECT * FROM highscoredata WHERE CONVERT(VARCHAR, highscores_username) = ? ', (username,))
+	for user in cursor:
+		print (user)
+		if (score > user[1]):	
+			cursor.execute('INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)', (username, score))
+			return 'hello'
+		else: 
+			return 'Not Added'
 
+	cursor.execute('INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)', (username, score))
+	return 'hello'
 
 
 
