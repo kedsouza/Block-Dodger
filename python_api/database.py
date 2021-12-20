@@ -53,6 +53,9 @@ def callHighScorePosition():
 	score = request.json['score']
 	return getHighScorePosition(score)
 
+
+
+
 @socketio.on('message')
 def handle_message(data):
 	print('recieved message ' + data)
@@ -84,14 +87,6 @@ def addHighScoreUser ():
 def insertIntoHighScore(username,score):
 	session.execute('INSERT INTO highscoresorder (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
 
-@app.route('/HighScores/Find', methods = ['POST'])
-def findHighScoreUser ():
-	try:
-		username = request.json['username']
-		rows = session.execute('SELECT * FROM highScores WHERE highscores_username=%s', (username,))
-	except:
-		return "Not Found"
-	return "Found"
 
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
