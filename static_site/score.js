@@ -11,37 +11,44 @@ socket.on('score', (data) => {
     populateHighScoreData(objs["data"]);
 })
 
+socket.on(username, (data) => {
+    console.log("called")
+    console.log(data)
+    document.getElementById("highScorePosition").innerHTML =  data + 'st'
+})
+
 
 
 
 
 const FLASK_API = "localhost:5000"
 
-function loadXMLDoc_GETHIGHSCORE(){
-    var xmlHttp = new XMLHttpRequest ();
-    xmlHttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200){
-            var responseText =  xmlHttp.responseText;
-            refreshHighScoreData(responseText);
-        }
-    };
-    xmlHttp.open ( "GET", "http://" + FLASK_API + "/HighScores/Get", true);
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');
-    xmlHttp.send();
-}
+// function loadXMLDoc_GETHIGHSCORE(){
+//     var xmlHttp = new XMLHttpRequest ();
+//     xmlHttp.onreadystatechange = function () {
+//         if (this.readyState == 4 && this.status == 200){
+//             var responseText =  xmlHttp.responseText;
+//             refreshHighScoreData(responseText);
+//         }
+//     };
+//     xmlHttp.open ( "GET", "http://" + FLASK_API + "/HighScores/Get", true);
+//     xmlHttp.setRequestHeader('Content-Type', 'application/json');
+//     xmlHttp.send();
+// }
 
-function loadXMLDoc_GETHIGHSCOREPOSITION (currentScore){
-var xmlHttp = new XMLHttpRequest ();
+function loadXMLDoc_GETHIGHSCOREPOSITION (username, currentScore){
+    socket.emit("requestScorePosition", {username, currentScore})
+    // var xmlHttp = new XMLHttpRequest ();
 
-var data = JSON.stringify({"score": currentScore});
-xmlHttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200){
-        document.getElementById("highScorePosition").innerHTML =  xmlHttp.responseText + 'st'
-    }
-}
-xmlHttp.open ( "POST", "http://" + FLASK_API + "/HighScores/GetPosition", true);
-xmlHttp.setRequestHeader('Content-Type', 'application/json');
-xmlHttp.send(data);
+    // var data = JSON.stringify({"score": currentScore});
+    // xmlHttp.onreadystatechange = function () {
+    //     if (this.readyState == 4 && this.status == 200){
+    //         document.getElementById("highScorePosition").innerHTML =  xmlHttp.responseText + 'st'
+    //     }
+    // }
+    // xmlHttp.open ( "POST", "http://" + FLASK_API + "/HighScores/GetPosition", true);
+    // xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    // xmlHttp.send(data);
 }	
 
 function loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score){

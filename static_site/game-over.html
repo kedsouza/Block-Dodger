@@ -80,7 +80,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="utils.js"></script>
-<script src="score.js"></script>
 <script>
 	function retry_button() {
 		window.location.replace("index.html");
@@ -93,6 +92,8 @@
 
     document.getElementById("Username").innerHTML =  get("username");
     document.getElementById("scoreWindow").innerHTML = "Score: " +  get("score");
+
+
 
    function populateHighScoreData(objs){
 	var highScoreTable = document.getElementById("HighScoreUsers");
@@ -118,6 +119,7 @@
 
 
 </script>
+<script src="score.js"></script>
 
 
 
