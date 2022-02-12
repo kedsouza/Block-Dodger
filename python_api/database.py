@@ -34,7 +34,6 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-
 # Flask endpoints implemented for testing the api. 
 # In prodcution websocket events will be used
 
