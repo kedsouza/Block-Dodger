@@ -5,94 +5,127 @@ Rest API that provides calls to the database.
 import json 
 import logging
 import datetime
+import time
+import sys
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.logging import default_handler
+from flask_socketio import SocketIO
 
+# from cassandra.cluster import Cluster
+# from cassandra.auth import PlainTextAuthProvider
+# from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 
-from cassandra.cluster import Cluster
-from cassandra.auth import PlainTextAuthProvider
-from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
+import threading
 
-# Cassandra Database
-
-# Remove SSL operation for now
-ssl_opts = {
-        'cert_reqs': CERT_NONE
-}
-auth_provider = PlainTextAuthProvider(username="block-dodger-cass-db", password="StMBPhgiA3qrzwTaVqGy4a1JzW3YNUXEkwyPt3Rns5HyK2gIXKxyD0SvctrR5XWJuCcc6dB8AdVB6X3vUquZKw==")
-cluster = Cluster(["block-dodger-cass-db.cassandra.cosmos.azure.com"], port=10350, auth_provider=auth_provider, ssl_options=ssl_opts)
-session = cluster.connect('highscoredata')
+# SQL
+# Some other example server values are
+# server = 'localhost\sqlexpress' # for a named instance
+# server = 'myserver,port' # to specify an alternate port
+import pyodbc 
+server = 'tcp:block-dodger.database.windows.net' 
+database = 'block-dodger-sql' 
+username = 'keegan' 
+password = 'Database15!' 
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = cnxn.cursor()
 
 app = Flask(__name__)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
-# Disable standard flask logging
-log = logging.getLogger('werkzeug')
-log.disabled = True
+# Flask endpoints implemented for testing the api. 
+# In prodcution websocket events will be used
 
-@app.route("/test")
-def test():
-	return 'hello there'
+# Health endpoint to verify the flask api is running
+@app.route("/health")
+def health():
+	return 'Healthy!'
 
-@app.route('/HighScores/Get', methods = ['GET'])
+@app.route("/HighScores/GetTopTen")
+def callgetHighScoreUsers():
+	return getHighScoreUsers()
+
+# JSON { "score" : int }
+@app.route('/HighScores/GetPosition', methods =['POST'])
+def callHighScorePosition():
+	score = request.json['score']
+	return getHighScorePosition(score)
+
+# JSON { "user" : string, "score" : int}
+@app.route('/HighScores/Add', methods = ['POST'])
+def calladdHighScoreUser():
+	username = request.json['username']
+	score = request.json['score']
+	return addHighScoreUser(username, score)
+
+@socketio.on('message')
+def handle_message(data):
+	print('recieved message ' + data)
+
+@socketio.on('requestScorePosition')
+def returnScorePosition(data):
+	username = data["username"]
+	currentScore = data["currentScore"]
+	socketio.emit(username, getHighScorePosition(currentScore))
+
+# Broadcasts high score data, every second to connected websocket clients
+def highscore_broadcast():
+	while True:
+		time.sleep(1)
+		data = getHighScoreUsers()
+		socketio.emit('score', data)
+
+# Returns the top ten users and scores.
 def getHighScoreUsers ():
+	cursor = cnxn.cursor()
+	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
+
 	json = '{"data": ['
-	rows = session.execute('select * from highScores;')
-	for row in rows:
-		json += '{ "username" : "' + row.highscores_username + '" , "score" : ' + str(row.highscores_score) + '},'
+	for i in cursor:
+		json += '{ "username" : "' + i[0] + '" , "score" : ' + str(i[1]) + '},'
 	json = json[:-1] 
 	json += ']}'
 
+	# Returns string in valid json format, will see if we can clean this up
 	return json
-@app.route('/HighScores/Add', methods = ['POST'])
-def addHighScoreUser ():
-	username = request.json['username']
-	score = request.json['score']
 
-	rows = session.execute('SELECT * FROM highScores WHERE highscores_username=%s', (username,))
-	for users in rows:
-		if (users !=None and users.highscores_score < score):	
-			insertIntoHighScore(username, score)
+# Queries the SQL Database to get the position based on score. 
+# inputs:
+# 	score: int
+def getHighScorePosition (score):
+	cursor = cnxn.cursor()	
+	cursor.execute('SELECT COUNT(highScores_score) FROM highScoredata WHERE highScores_score >=' + str(score))
+	result = cursor.fetchall()
+	# Increments position to account for top record being 0 
+	return str(result[0][0] + 1)
+
+# Adds inputs into the database, need to revist logic of user names
+# inputs:
+# 	username: text
+# 	score : int 
+def addHighScoreUser (username, score):
+	cursor = cnxn.cursor()
+	cursor.execute('SELECT * FROM highscoredata WHERE CONVERT(VARCHAR, highscores_username) = ? ', (username,))
+	for user in cursor:
+		print (user)
+		if (score > user[1]):	
+			cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
 			return 'hello'
 		else: 
 			return 'Not Added'
 
-	insertIntoHighScore(username, score)
+	cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
 	return 'hello'
 
-def insertIntoHighScore(username,score):
-	session.execute('INSERT INTO highScores (highScores_username, highScores_score) VALUES (%s, %s)', (username, score))
-
-
-@app.route('/HighScores/Find', methods = ['POST'])
-def findHighScoreUser ():
-	try:
-		username = request.json['username']
-		rows = session.execute('SELECT * FROM highScores WHERE highscores_username=%s', (username,))
-	except:
-		return "Not Found"
-	return "Found"
-
-@app.route('/HighScores/GetPosition', methods =['POST'])
-def getHighScorePosition ():
-	count = 0
-	score = request.json['score']
-	rows = session.execute('SELECT * FROM highScores WHERE highScores_score >= %s ALLOW FILTERING', (score,))
-	for row in rows:
-		count += 1
-	return str(count + 1)
-
-# @app.errorhandler(Exception)
-# def log_errror (error):
-# 	return
-# 	# timestamp = datetime.datetime.utcnow()
-# 	# logging.error([timestamp, error])
-
-# @app.errorhandler()
-# def log_errror (error):
-# 	return
-# 	# timestamp = datetime.datetime.utcnow()
-# 	# logging.error([timestamp, error])
-
 if __name__ == '__main__':
-   app.run("0.0.0.0")
+	try:
+		t1 = threading.Thread(target=highscore_broadcast)
+		t1.daemon = True
+		t1.start()
+		socketio.run(app, host='0.0.0.0')
+	except KeyboardInterrupt:
+		print ('Stopping')
+		sys.exit(0)
+
+

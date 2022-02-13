@@ -1,0 +1,4 @@
+CREATE TABLE highscoredata (
+	highScores_username text,
+	highScores_score int,
+	);
