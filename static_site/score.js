@@ -1,4 +1,8 @@
-var socket = io("http://localhost:5000", { cors: {
+const FLASK_API = "https://block-dodger.azurewebsites.net/"
+
+
+
+var socket = io(FLASK_API, { cors: {
     origin: "*",
 }
   });
@@ -21,7 +25,6 @@ socket.on(username, (data) => {
 
 
 
-const FLASK_API = "localhost:5000"
 
 // function loadXMLDoc_GETHIGHSCORE(){
 //     var xmlHttp = new XMLHttpRequest ();
@@ -55,7 +58,7 @@ function loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score){
 var data = JSON.stringify({"username": username, "score": score});
     var xmlhttp = new XMLHttpRequest ();
     
-xmlhttp.open ( "POST", "http://" + FLASK_API + "/HighScores/Add", false);
+xmlhttp.open ( "POST", FLASK_API + "/HighScores/Add", false);
     xmlhttp.setRequestHeader('content-type', 'application/json');
     xmlhttp.send(data);
     return xmlhttp.responsetext;

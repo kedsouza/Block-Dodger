@@ -12,9 +12,9 @@ from flask_cors import CORS
 from flask.logging import default_handler
 from flask_socketio import SocketIO
 
-from cassandra.cluster import Cluster
-from cassandra.auth import PlainTextAuthProvider
-from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
+# from cassandra.cluster import Cluster
+# from cassandra.auth import PlainTextAuthProvider
+# from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
 
 import threading
 
@@ -118,14 +118,12 @@ def addHighScoreUser (username, score):
 	cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
 	return 'hello'
 
-
-
 if __name__ == '__main__':
 	try:
 		t1 = threading.Thread(target=highscore_broadcast)
 		t1.daemon = True
 		t1.start()
-		socketio.run(app)
+		socketio.run(app, host='0.0.0.0')
 	except KeyboardInterrupt:
 		print ('Stopping')
 		sys.exit(0)
