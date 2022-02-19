@@ -30,6 +30,15 @@ password = 'Database15!'
 cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = cnxn.cursor()
 
+cursor.execute("SELECT @@version;")
+row = cursor.fetchone()
+if row:
+	print("Succesfully estiablished DB connection: " + row[0])
+else:
+	print("Failed to connect to db")
+	sys.exit(0)
+
+
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
