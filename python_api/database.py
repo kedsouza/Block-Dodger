@@ -1,7 +1,7 @@
 """
 Rest API that provides calls to the database.
 """
-
+import os
 import json 
 import logging
 import datetime
@@ -12,21 +12,19 @@ from flask_cors import CORS
 from flask.logging import default_handler
 from flask_socketio import SocketIO
 
-# from cassandra.cluster import Cluster
-# from cassandra.auth import PlainTextAuthProvider
-# from ssl import PROTOCOL_TLSv1_2, SSLContext, CERT_NONE
-
 import threading
 
+# Load environment variables from .env file.
+# On Azure we execude .env file and set them as app settings.
+from dotenv import load_dotenv
+load_dotenv()
+
 # SQL
-# Some other example server values are
-# server = 'localhost\sqlexpress' # for a named instance
-# server = 'myserver,port' # to specify an alternate port
 import pyodbc 
-server = 'tcp:block-dodger.database.windows.net' 
-database = 'block-dodger-sql' 
-username = 'keegan' 
-password = 'Database15!' 
+server = os.getenv('BD_SERVER') #'tcp:block-dodger.database.windows.net' 
+database = os.getenv('BD_DATABASE') #'block-dodger-sql' 
+username = os.getenv('BD_USER')#'keegan' 
+password = os.getenv('BD_PASSWORD') #'Database15!' 
 cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = cnxn.cursor()
 
