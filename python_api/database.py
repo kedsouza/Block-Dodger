@@ -35,11 +35,11 @@ if row:
 else:
 	print("Failed to connect to db")
 	sys.exit(0)
+cursor.close()
 
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins='*')
 
 # Flask endpoints implemented for testing the api. 
 # In prodcution websocket events will be used
@@ -51,7 +51,10 @@ def health():
 
 @app.route("/HighScores/GetTopTen")
 def callgetHighScoreUsers():
-	return getHighScoreUsers()
+	data = getHighScoreUsers()
+	if data == None:
+		return 'Error', 500
+	return data
 
 # JSON { "score" : int }
 @app.route('/HighScores/GetPosition', methods =['POST'])
@@ -66,15 +69,15 @@ def calladdHighScoreUser():
 	score = request.json['score']
 	return addHighScoreUser(username, score)
 
-@socketio.on('message')
-def handle_message(data):
-	print('recieved message ' + data)
+# @socketio.on('message')
+# def handle_message(data):
+# 	print('recieved message ' + data)
 
-@socketio.on('requestScorePosition')
-def returnScorePosition(data):
-	username = data["username"]
-	currentScore = data["currentScore"]
-	socketio.emit(username, getHighScorePosition(currentScore))
+# @socketio.on('requestScorePosition')
+# def returnScorePosition(data):
+# 	username = data["username"]
+# 	currentScore = data["currentScore"]
+# 	socketio.emit(username, getHighScorePosition(currentScore))
 
 # Broadcasts high score data, every second to connected websocket clients
 def highscore_broadcast():
@@ -85,17 +88,20 @@ def highscore_broadcast():
 
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
-	cursor = cnxn.cursor()
-	cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
-
-	json = '{"data": ['
-	for i in cursor:
-		json += '{ "username" : "' + i[0] + '" , "score" : ' + str(i[1]) + '},'
-	json = json[:-1] 
-	json += ']}'
-
-	# Returns string in valid json format, will see if we can clean this up
-	return json
+	data = {}
+	try:
+		cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+		cursor = cnxn.cursor()	
+		cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
+		for row in cursor:
+			user, score = row[0], row[1]
+			data[user] = score
+	except pyodbc.Error as e:
+		print(e)
+	finally:
+		cursor.close()
+		cnxn.close()
+	return data
 
 # Queries the SQL Database to get the position based on score. 
 # inputs:
@@ -126,13 +132,6 @@ def addHighScoreUser (username, score):
 	return 'hello'
 
 if __name__ == '__main__':
-	try:
-		t1 = threading.Thread(target=highscore_broadcast)
-		t1.daemon = True
-		t1.start()
-		socketio.run(app, host='0.0.0.0')
-	except KeyboardInterrupt:
-		print ('Stopping')
-		sys.exit(0)
+	app.run(host='0.0.0.0')
 
 
