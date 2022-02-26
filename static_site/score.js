@@ -1,4 +1,4 @@
-const FLASK_API = "https://block-dodger.azurewebsites.net/"
+const FLASK_API = "http://localhost:5000"
 
 
 
@@ -11,8 +11,9 @@ socket.on('connect', function() {
 });
 
 socket.on('score', (data) => {
+    console.log(data)
     objs = JSON.parse(data)
-    populateHighScoreData(objs["data"]);
+    populateHighScoreData(data);
 })
 
 socket.on(username, (data) => {
@@ -20,10 +21,6 @@ socket.on(username, (data) => {
     console.log(data)
     document.getElementById("highScorePosition").innerHTML =  data + 'st'
 })
-
-
-
-
 
 
 // function loadXMLDoc_GETHIGHSCORE(){

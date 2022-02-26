@@ -11,8 +11,11 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.logging import default_handler
 from flask_socketio import SocketIO
+from flask import jsonify
 
-import threading
+import json
+
+from threading import Thread
 
 # Load environment variables from .env file.
 # On Azure we execude .env file and set them as app settings.
@@ -25,7 +28,9 @@ server = os.getenv('BD_SERVER') #'tcp:block-dodger.database.windows.net'
 database = os.getenv('BD_DATABASE') #'block-dodger-sql' 
 username = os.getenv('BD_USER')#'keegan' 
 password = os.getenv('BD_PASSWORD') #'Database15!' 
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+connecion_string = 'DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password
+
+cnxn = pyodbc.connect(connecion_string)
 cursor = cnxn.cursor()
 
 cursor.execute("SELECT @@version;")
@@ -40,9 +45,15 @@ cursor.close()
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
+thread = None
 
 # Flask endpoints implemented for testing the api. 
 # In prodcution websocket events will be used
+
+
+
+	
 
 # Health endpoint to verify the flask api is running
 @app.route("/health")
@@ -52,9 +63,12 @@ def health():
 @app.route("/HighScores/GetTopTen")
 def callgetHighScoreUsers():
 	data = getHighScoreUsers()
+	
 	if data == None:
 		return 'Error', 500
-	return data
+
+	
+	return jsonify(data)
 
 # JSON { "score" : int }
 @app.route('/HighScores/GetPosition', methods =['POST'])
@@ -69,9 +83,15 @@ def calladdHighScoreUser():
 	score = request.json['score']
 	return addHighScoreUser(username, score)
 
-# @socketio.on('message')
-# def handle_message(data):
-# 	print('recieved message ' + data)
+@socketio.on('message')
+def handle_message(data):
+	global thread
+	if thread is None:
+		thread = Thread(target=highscore_broadcast)
+		thread.daemon = True
+		thread.start()
+	socketio.emit('score', "sadf")
+	print('recieved message ' + data)
 
 # @socketio.on('requestScorePosition')
 # def returnScorePosition(data):
@@ -83,24 +103,26 @@ def calladdHighScoreUser():
 def highscore_broadcast():
 	while True:
 		time.sleep(1)
+		print('here')
 		data = getHighScoreUsers()
-		socketio.emit('score', data)
+		socketio.emit('score', "sadf")
 
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
 	data = {}
 	try:
-		cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+		cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password, timeout=1)
 		cursor = cnxn.cursor()	
 		cursor.execute('SELECT TOP 10 * from highscoredata ORDER BY highScores_score desc')
 		for row in cursor:
-			user, score = row[0], row[1]
+			user, score = str(row[0]), str(row[1])
 			data[user] = score
 	except pyodbc.Error as e:
 		print(e)
 	finally:
 		cursor.close()
 		cnxn.close()
+
 	return data
 
 # Queries the SQL Database to get the position based on score. 
@@ -132,6 +154,9 @@ def addHighScoreUser (username, score):
 	return 'hello'
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0')
+	socketio.run(app, host='0.0.0.0')
+
+
+	#app.run('0.0.0.0')
 
 
