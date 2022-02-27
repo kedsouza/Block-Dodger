@@ -61,7 +61,6 @@ function moveObstacle (pos) {
             gameOver = true;
     if (username != null){
         loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score);
-        //loadxmldoc_DELETECURRENTUSER(username);
     }
             //document.location.reload();
             window.location.replace("game-over.html?username=" + username + "&score="+score);

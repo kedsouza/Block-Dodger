@@ -1,43 +1,18 @@
-const FLASK_API = "https://block-dodger.azurewebsites.net/"
+const FLASK_API = "localhost:5000"
 
-
-
-var socket = io(FLASK_API, { cors: {
-    origin: "*",
+function loadXMLDoc_GETHIGHSCORE(){
+    var xmlHttp = new XMLHttpRequest ();
+    xmlHttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200){
+            var responseText =  xmlHttp.responseText;
+            objs = JSON.parse(responseText)
+            populateHighScoreData(objs);
+        }
+    };
+    xmlHttp.open ( "GET", "http://" + FLASK_API + "/HighScores/GetTopTen", true);
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    xmlHttp.send();
 }
-  });
-socket.on('connect', function() {
-    socket.send("Hello-client is connected!");
-});
-
-socket.on('score', (data) => {
-    objs = JSON.parse(data)
-    populateHighScoreData(objs["data"]);
-})
-
-socket.on(username, (data) => {
-    console.log("called")
-    console.log(data)
-    document.getElementById("highScorePosition").innerHTML =  data + 'st'
-})
-
-
-
-
-
-
-// function loadXMLDoc_GETHIGHSCORE(){
-//     var xmlHttp = new XMLHttpRequest ();
-//     xmlHttp.onreadystatechange = function () {
-//         if (this.readyState == 4 && this.status == 200){
-//             var responseText =  xmlHttp.responseText;
-//             refreshHighScoreData(responseText);
-//         }
-//     };
-//     xmlHttp.open ( "GET", "http://" + FLASK_API + "/HighScores/Get", true);
-//     xmlHttp.setRequestHeader('Content-Type', 'application/json');
-//     xmlHttp.send();
-// }
 
 function loadXMLDoc_GETHIGHSCOREPOSITION (username, currentScore){
     socket.emit("requestScorePosition", {username, currentScore})

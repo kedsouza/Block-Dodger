@@ -79,44 +79,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="utils.js"></script>
 <script src="game.js"></script>
+<script src="score.js"></script>
 <script>
 
     var username = askforUsername();
 
+    function populateHighScoreData(objs){
+		var highScoreTable = document.getElementById("HighScoreUsers");
+		highScoreTable.innerHTML = "";
 
+		for (var i = 9; i >= 0; i--){
+			
+			var row1 = highScoreTable.insertRow(0);
+			var cell1 = row1.insertCell(0);
+			var cell2 = row1.insertCell(1);
 
-   function populateHighScoreData(objs){
-	var highScoreTable = document.getElementById("HighScoreUsers");
-	highScoreTable.innerHTML = "";
-
-
-
-	for (var i = 9; i >= 0; i--){
-		
-		var row1 = highScoreTable.insertRow(0);
-		var cell1 = row1.insertCell(0);
-		var cell2 = row1.insertCell(1);
-
-		
-		// Add some text to the new cells:
-		if (objs[i] != null){
-			cell1.innerHTML = objs[i].username;
-			cell2.innerHTML = objs[i].score;
-		}
+			// Add some text to the new cells:
+			if (objs[i] != null){
+				cell1.innerHTML = objs[i][0];
+				cell2.innerHTML = objs[i][1];
+			}
 	}
 
    }
 
-   setInterval (function () {loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);}, 1000);
-
+   //setInterval (function () {loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);}, 1000);
+   setInterval (function () {loadXMLDoc_GETHIGHSCORE ( username, score);}, 3000);
 
 </script>
-<script src="score.js"></script>
-
-
-
-
-
 
 </body>
 </html>
