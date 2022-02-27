@@ -69,6 +69,15 @@ def calladdHighScoreUser():
 	score = request.json['score']
 	return addHighScoreUser(username, score)
 
+#JSON { "user" : string }
+@app.route('/HighScores/CheckUser', methods = ['POST'])
+def callCheckUserExists():
+	username = request.json['username']
+	if checkUserExists(username):
+		return 'User Exists', 200
+	
+	return 'User Does not Exist', 404
+
 # Returns the top ten users and scores.
 def getHighScoreUsers ():
 	data = []
@@ -101,20 +110,41 @@ def getHighScorePosition (score):
 # 	username: text
 # 	score : int 
 def addHighScoreUser (username, score):
-	cursor = cnxn.cursor()
-	cursor.execute('SELECT * FROM highscoredata WHERE CONVERT(VARCHAR, highscores_username) = ? ', (username,))
-	for user in cursor:
-		print (user)
-		if (score > user[1]):	
-			cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
-			return 'hello'
-		else: 
-			return 'Not Added'
+	print(username, score)
+	inserted = -1
+	try:
+		if checkUserExists(username):
+			pass
+		
+		cnxn = pyodbc.connect(connecion_string)
+		cursor = cnxn.cursor()
+		result = cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
+		print(result.rowcount)
+	except pyodbc.Error as e:
+		print(e)
+	finally:
+		cursor.close()
+		cnxn.close()
+	
+	return "Inserted"
 
-	cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
-	return 'hello'
+def checkUserExists(username: str) -> bool:
+	exists = False
+	try:
+		cnxn = pyodbc.connect(connecion_string)
+		cursor = cnxn.cursor()
+		cursor.execute('SELECT * FROM highscoredata WHERE CONVERT(VARCHAR, highscores_username) = ? ', (username))
+		row = cursor.fetchone()
+		if row != None:
+			exists = True
+	except pyodbc.Error as e:
+		print(e)
+	finally:
+		cursor.close()
+		cnxn.close()
+	
+	return exists
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0')
-
 
