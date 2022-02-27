@@ -67,7 +67,11 @@ def callHighScorePosition():
 def calladdHighScoreUser():
 	username = request.json['username']
 	score = request.json['score']
-	return addHighScoreUser(username, score)
+	result = addHighScoreUser(username, score)
+	if result[0] == True:
+		return result[1], 200
+	else:
+		return result[1], 400
 
 #JSON { "user" : string }
 @app.route('/HighScores/CheckUser', methods = ['POST'])
@@ -105,35 +109,53 @@ def getHighScorePosition (score):
 	# Increments position to account for top record being 0 
 	return str(result[0][0] + 1)
 
-# Adds inputs into the database, need to revist logic of user names
-# inputs:
-# 	username: text
-# 	score : int 
-def addHighScoreUser (username, score):
-	print(username, score)
-	inserted = -1
-	try:
-		if checkUserExists(username):
-			pass
-		
-		cnxn = pyodbc.connect(connecion_string)
-		cursor = cnxn.cursor()
-		result = cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
-		print(result.rowcount)
-	except pyodbc.Error as e:
-		print(e)
-	finally:
-		cursor.close()
-		cnxn.close()
-	
-	return "Inserted"
+# Need to refactor this
+def addHighScoreUser (username: str, score: int) -> set():
+	inserted, msg = False, ""
+	valid = True
+	# Check if username already has a high score assoicated in the db
+	if checkUserExists(username):
+		try:
+			cnxn = pyodbc.connect(connecion_string)
+			cursor = cnxn.cursor()
+			cursor.execute('SELECT * FROM highscoredata WHERE highscores_username = ? ', (username))
+			row = cursor.fetchone()
+			if row[1] > score:
+				valid = False
+		except pyodbc.Error as e:
+			print(e)
+			valid = False
+			inserted = False
+		finally:
+			cursor.close()
+			cnxn.close()
+	# If not, insert it into the database 
+	if not valid:
+		msg = "This username already has a higher score"
+	else:
+		try:
+			cnxn = pyodbc.connect(connecion_string)
+			cursor = cnxn.cursor()
+			if checkUserExists(username) == False:
+				result = cursor.execute("""INSERT INTO highscoredata (highScores_username, highScores_score) VALUES (?, ?)""", username, score)
+			else:
+				result = cursor.execute("""UPDATE highscoredata SET highScores_score = (?) WHERE highScores_username = (?)""", score, username)
+			cnxn.commit()
+			inserted, msg = True, "Score Inserted Successfully"
+		except pyodbc.Error as e:
+			print(e)
+			inserted = False
+		finally:
+			cursor.close()
+			cnxn.close()
+	return (inserted, msg)
 
 def checkUserExists(username: str) -> bool:
 	exists = False
 	try:
 		cnxn = pyodbc.connect(connecion_string)
 		cursor = cnxn.cursor()
-		cursor.execute('SELECT * FROM highscoredata WHERE CONVERT(VARCHAR, highscores_username) = ? ', (username))
+		cursor.execute('SELECT * FROM highscoredata WHERE highscores_username = ? ', (username))
 		row = cursor.fetchone()
 		if row != None:
 			exists = True

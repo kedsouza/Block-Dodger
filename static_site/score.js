@@ -33,8 +33,8 @@ function loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score){
 var data = JSON.stringify({"username": username, "score": score});
     var xmlhttp = new XMLHttpRequest ();
     
-xmlhttp.open ( "POST", FLASK_API + "/HighScores/Add", false);
-    xmlhttp.setRequestHeader('content-type', 'application/json');
-    xmlhttp.send(data);
+    xmlhttp.open ( "POST", "http://" + FLASK_API + "/HighScores/Add", false);
+        xmlhttp.setRequestHeader('content-type', 'application/json');
+        xmlhttp.send(data);
     return xmlhttp.responsetext;
 }

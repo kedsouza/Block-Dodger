@@ -1,4 +1,5 @@
 CREATE TABLE highscoredata (
-	highScores_username text,
-	highScores_score int,
+	highScores_username varchar(255),
+	highScores_score int NOT NULL,
+	PRIMARY KEY (highScores_username)
 	);
