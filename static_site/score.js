@@ -15,18 +15,17 @@ function loadXMLDoc_GETHIGHSCORE(){
 }
 
 function loadXMLDoc_GETHIGHSCOREPOSITION (username, currentScore){
-    socket.emit("requestScorePosition", {username, currentScore})
-    // var xmlHttp = new XMLHttpRequest ();
+    var xmlHttp = new XMLHttpRequest ();
 
-    // var data = JSON.stringify({"score": currentScore});
-    // xmlHttp.onreadystatechange = function () {
-    //     if (this.readyState == 4 && this.status == 200){
-    //         document.getElementById("highScorePosition").innerHTML =  xmlHttp.responseText + 'st'
-    //     }
-    // }
-    // xmlHttp.open ( "POST", "http://" + FLASK_API + "/HighScores/GetPosition", true);
-    // xmlHttp.setRequestHeader('Content-Type', 'application/json');
-    // xmlHttp.send(data);
+    var data = JSON.stringify({"score": currentScore});
+    xmlHttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200){
+            document.getElementById("highScorePosition").innerHTML =  xmlHttp.responseText + 'st'
+        }
+    }
+    xmlHttp.open ( "POST", "http://" + FLASK_API + "/HighScores/GetPosition", true);
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    xmlHttp.send(data);
 }	
 
 function loadXMLDoc_PUSHTOHIGHSCOREDATABASE(username, score){

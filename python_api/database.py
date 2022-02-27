@@ -56,11 +56,13 @@ def callgetHighScoreUsers():
 		return 'Error', 500
 	return jsonify(data)
 
-# JSON { "score" : int }
 @app.route('/HighScores/GetPosition', methods =['POST'])
 def callHighScorePosition():
 	score = request.json['score']
-	return getHighScorePosition(score)
+	position = getHighScorePosition(score)
+	if position == -1:
+		return 'Error', 500
+	return str(position)
 
 # JSON { "user" : string, "score" : int}
 @app.route('/HighScores/Add', methods = ['POST'])
@@ -73,7 +75,6 @@ def calladdHighScoreUser():
 	else:
 		return result[1], 400
 
-#JSON { "user" : string }
 @app.route('/HighScores/CheckUser', methods = ['POST'])
 def callCheckUserExists():
 	username = request.json['username']
@@ -82,7 +83,6 @@ def callCheckUserExists():
 	
 	return 'User Does not Exist', 404
 
-# Returns the top ten users and scores.
 def getHighScoreUsers ():
 	data = []
 	try:
@@ -99,15 +99,22 @@ def getHighScoreUsers ():
 		cnxn.close()
 	return data
 
-# Queries the SQL Database to get the position based on score. 
-# inputs:
-# 	score: int
-def getHighScorePosition (score):
-	cursor = cnxn.cursor()	
-	cursor.execute('SELECT COUNT(highScores_score) FROM highScoredata WHERE highScores_score >=' + str(score))
-	result = cursor.fetchall()
-	# Increments position to account for top record being 0 
-	return str(result[0][0] + 1)
+
+def getHighScorePosition (score: str) -> int:
+	position = -1
+	try:
+		cnxn = pyodbc.connect(connecion_string)
+		cursor = cnxn.cursor()
+		cursor.execute('SELECT COUNT(highScores_score) FROM highScoredata WHERE highScores_score >=' + str(score))
+		result = cursor.fetchall()
+		# Increments score to account for top record being 0
+		position = result[0][0] + 1
+	except pyodbc.Error as e:
+		print(e)
+	finally:
+		cursor.close()
+		cnxn.close()
+	return position
 
 # Need to refactor this
 def addHighScoreUser (username: str, score: int) -> set():

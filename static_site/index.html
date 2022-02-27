@@ -100,11 +100,13 @@
 				cell2.innerHTML = objs[i][1];
 			}
 	}
+	loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);
+	loadXMLDoc_GETHIGHSCORE ( username, score);
 
    }
 
-   //setInterval (function () {loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);}, 1000);
-   setInterval (function () {loadXMLDoc_GETHIGHSCORE ( username, score);}, 3000);
+   setInterval (function () {loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);}, 1000);
+   setInterval (function () {loadXMLDoc_GETHIGHSCORE ( username, score);}, 1000);
 
 </script>
 
