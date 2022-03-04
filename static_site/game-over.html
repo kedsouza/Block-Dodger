@@ -78,7 +78,6 @@
 	<h1 class=score  id ="scoreWindow">
 	<h1 class=score  id ="Username">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 <script src="utils.js"></script>
 <script src="score.js"></script>
 <script>
@@ -93,6 +92,9 @@
 
     document.getElementById("Username").innerHTML =  get("username");
     document.getElementById("scoreWindow").innerHTML = "Score: " +  get("score");
+
+	username = get("username")
+	score = get("score")
 
 
 
@@ -111,14 +113,14 @@
 		
 		// Add some text to the new cells:
 		if (objs[i] != null){
-			cell1.innerHTML = objs[i].username;
-			cell2.innerHTML = objs[i].score;
+			cell1.innerHTML = objs[i][0];
+			cell2.innerHTML = objs[i][1];
 		}
 	}
 
    }
-   loadXMLDoc_GETHIGHSCOREPOSITION ( username, score);
-   loadXMLDoc_GETHIGHSCORE ();
+   loadXMLDoc_GETHIGHSCOREPOSITION( username, score);
+   loadXMLDoc_GETHIGHSCORE();
 
 </script>
 
