@@ -50,10 +50,11 @@ const HighScoreTable = () => {
                     </tr>
                 </table>
             </div>
-        </div>
-        
+            <div className='w3-display-bottommiddle w3-container w3-purple'style={{height:"100px", width:"400px"}} >            
+                <h4>Your Current Position: test </h4>
+            </div>
+        </div>        
     )
 }
-
 
 export default HighScoreTable
